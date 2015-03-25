@@ -123,7 +123,7 @@ class Base
         return new Response\Conversion($rawResp, $meta);
     }
 
-    public function participate($experiment, $alternatives, $traffic_fraction = 1)
+    public function participate($experiment, $alternatives, $trafficFraction = 1)
     {
         if (count($alternatives) < 2) {
             throw new \Exception('At least two alternatives are required');
@@ -135,7 +135,7 @@ class Base
             }
         }
 
-        if (floatval($traffic_fraction) < 0 || floatval($traffic_fraction) > 1) {
+        if (floatval($trafficFraction) < 0 || floatval($trafficFraction) > 1) {
             throw new \Exception('Invalid Traffic Fraction');
         }
 
@@ -145,7 +145,7 @@ class Base
             list($rawResp, $meta) = $this->sendRequest('participate', array(
                 'experiment'       => $experiment,
                 'alternatives'     => $alternatives,
-                'traffic_fraction' => $traffic_fraction,
+                'traffic_fraction' => $trafficFraction,
             ));
         }
 
@@ -163,20 +163,20 @@ class Base
 
     protected function getIpAddress()
     {
-        $ordered_choices = array(
+        $orderedChoices = array(
             'HTTP_X_FORWARDED_FOR',
             'HTTP_X_REAL_IP',
             'HTTP_CLIENT_IP',
             'REMOTE_ADDR',
         );
-        $invalid_ips     = array('127.0.0.1', '::1');
+        $invalidIps     = array('127.0.0.1', '::1');
 
         // check each server var in order
         // accepted ip must be non null and not in the invalid_ips list
-        foreach ($ordered_choices as $var) {
+        foreach ($orderedChoices as $var) {
             if (isset($_SERVER[$var])) {
                 $ip = $_SERVER[$var];
-                if ($ip && !in_array($ip, $invalid_ips)) {
+                if ($ip && !in_array($ip, $invalidIps)) {
                     $ips = explode(',', $ip);
 
                     return reset($ips);
