@@ -18,7 +18,7 @@ The PHP client stores a unique client id in the current user's cookie by default
 
 ```php
 require 'vendor/autoload.php';
-$sp = new \SeatGeek\Sixpack\Session\Base;
+$sp = new \SeatGeek\Sixpack\Session\Session;
 $alt = $sp->participate('test', array('blue', 'red'))->getAlternative();
 if ($alt == 'blue') {
     /* do something blue */
@@ -31,7 +31,7 @@ Each session has a `client_id` associated with it that must be preserved across 
 
 ```php
 require 'vendor/autoload.php';
-$sp = new \SeatGeek\Sixpack\Session\Base;
+$sp = new \SeatGeek\Sixpack\Session\Session;
 $resp = $sp->participate("new-test", array("alternative-1", "alternative-2"));
 store_in_database("sixpack-id", $resp->getClientId());
 ```
@@ -41,7 +41,7 @@ For future requests, create the `Session` using the `client_id` stored in the co
 ```php
 require 'vendor/autoload.php';
 $client_id = get_from_database("sixpack-id")
-$sp = new \SeatGeek\Sixpack\Session\Base(array('clientId' => $client_id));
+$sp = new \SeatGeek\Sixpack\Session\Session(array('clientId' => $client_id));
 
 $sp->convert('new-test');
 ```
