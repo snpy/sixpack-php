@@ -130,7 +130,7 @@ class Session
         }
 
         if (floatval($trafficFraction) < 0 || floatval($trafficFraction) > 1) {
-            throw new \Exception('Invalid Traffic Fraction');
+            throw new \Exception('Invalid Traffic Fraction; only [0,1] are allowed');
         }
 
         if ($this->isForced($experiment)) {
