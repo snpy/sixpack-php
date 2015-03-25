@@ -15,7 +15,7 @@ class MetaBag extends ParameterBag
 
     public function getHttpCode()
     {
-        return $this->get('http_code');
+        return (int) $this->get('http_code');
     }
 
     public function getUrl()
