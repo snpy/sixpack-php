@@ -1,8 +1,8 @@
-[![Latest Stable Version](https://poser.pugx.org/seatgeek/sixpack-php/version.png)](https://packagist.org/packages/seatgeek/sixpack-php)
+[![Latest Stable Version](https://poser.pugx.org/snpy/sixpack-php/version.png)](https://packagist.org/packages/snpy/sixpack-php)
 
 # Sixpack
 
-PHP client library for SeatGeak's [Sixpack](https://github.com/seatgeek/sixpack) ab testing framework.
+PHP client library for SeatGeak's [Sixpack](https://github.com/sixpack/sixpack) ab testing framework.
 
 ## Installation
 
