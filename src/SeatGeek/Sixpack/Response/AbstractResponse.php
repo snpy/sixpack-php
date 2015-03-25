@@ -5,27 +5,28 @@ namespace SeatGeek\Sixpack\Response;
 abstract class AbstractResponse
 {
     protected $response;
+    /** @var MetaBag */
     protected $meta;
 
     public function __construct($jsonResponse, $meta)
     {
         $this->response = json_decode($jsonResponse);
-        $this->meta     = $meta;
+        $this->meta     = new MetaBag((array) $meta);
     }
 
     public function getSuccess()
     {
-        return ($this->meta['http_code'] === 200);
+        return ($this->getStatus() === 200);
     }
 
     public function getStatus()
     {
-        return $this->meta['http_code'];
+        return $this->meta->getHttpCode();
     }
 
     public function getCalledUrl()
     {
-        return $this->meta['url'];
+        return $this->meta->getUrl();
     }
 
     public function getClientId()
