@@ -4,7 +4,6 @@ namespace SeatGeek\Sixpack\Session;
 
 class Temp extends Base
 {
-
     protected function retrieveClientId()
     {
         return;

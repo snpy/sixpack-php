@@ -15,16 +15,16 @@ class Base
 
     public function __construct($options = array())
     {
-        if (isset($options["baseUrl"])) {
-            $this->baseUrl = $options["baseUrl"];
+        if (isset($options['baseUrl'])) {
+            $this->baseUrl = $options['baseUrl'];
         }
-        if (isset($options["cookiePrefix"])) {
-            $this->cookiePrefix = $options["cookiePrefix"];
+        if (isset($options['cookiePrefix'])) {
+            $this->cookiePrefix = $options['cookiePrefix'];
         }
-        if (isset($options["timeout"])) {
-            $this->timeout = $options["timeout"];
+        if (isset($options['timeout'])) {
+            $this->timeout = $options['timeout'];
         }
-        $this->setClientId(isset($options["clientId"]) ? $options["clientId"] : null);
+        $this->setClientId(isset($options['clientId']) ? $options['clientId'] : null);
     }
 
     protected function setClientId($clientId = null)
@@ -55,7 +55,7 @@ class Base
     protected function storeClientId($clientId)
     {
         $cookieName = $this->cookiePrefix . '_client_id';
-        setcookie($cookieName, $clientId, time() + (60 * 60 * 24 * 30 * 100), "/");
+        setcookie($cookieName, $clientId, time() + (60 * 60 * 24 * 30 * 100), '/');
     }
 
     protected function generateClientId()
@@ -80,7 +80,7 @@ class Base
 
     public function isForced($experiment)
     {
-        $forceKey = "sixpack-force-" . $experiment;
+        $forceKey = 'sixpack-force-' . $experiment;
         if (in_array($forceKey, array_keys($_GET))) {
             return true;
         }
@@ -90,18 +90,18 @@ class Base
 
     protected function forceAlternative($experiment, $alternatives)
     {
-        $forceKey  = "sixpack-force-" . $experiment;
+        $forceKey  = 'sixpack-force-' . $experiment;
         $forcedAlt = $_GET[$forceKey];
 
         if (!in_array($forcedAlt, $alternatives)) {
-            throw new \Exception("Invalid forced alternative");
+            throw new \Exception('Invalid forced alternative');
         }
 
         $mockJson = json_encode(array(
-            "status"      => "ok",
-            "alternative" => array("name" => $forcedAlt),
-            "experiment"  => array("version" => 0, "name" => $experiment),
-            "client_id"   => null,
+            'status'      => 'ok',
+            'alternative' => array('name' => $forcedAlt),
+            'experiment'  => array('version' => 0, 'name' => $experiment),
+            'client_id'   => null,
         ));
         $mockMeta = array('http_code' => 200, 'called_url' => '');
 
@@ -116,8 +116,8 @@ class Base
     public function convert($experiment, $kpi = null)
     {
         list($rawResp, $meta) = $this->sendRequest('convert', array(
-            "experiment" => $experiment,
-            "kpi"        => $kpi,
+            'experiment' => $experiment,
+            'kpi'        => $kpi,
         ));
 
         return new Response\Conversion($rawResp, $meta);
@@ -126,26 +126,26 @@ class Base
     public function participate($experiment, $alternatives, $traffic_fraction = 1)
     {
         if (count($alternatives) < 2) {
-            throw new \Exception("At least two alternatives are required");
+            throw new \Exception('At least two alternatives are required');
         }
 
         foreach ($alternatives as $alt) {
             if (!preg_match('#^[a-z0-9][a-z0-9\-_ ]*$#i', $alt)) {
-                throw new \Exception("Invalid Alternative Name: {$alt}");
+                throw new \Exception(sprintf('Invalid Alternative Name: %s', $alt));
             }
         }
 
         if (floatval($traffic_fraction) < 0 || floatval($traffic_fraction) > 1) {
-            throw new \Exception("Invalid Traffic Fraction");
+            throw new \Exception('Invalid Traffic Fraction');
         }
 
         if ($this->isForced($experiment)) {
             list($rawResp, $meta) = $this->forceAlternative($experiment, $alternatives);
         } else {
             list($rawResp, $meta) = $this->sendRequest('participate', array(
-                "experiment"       => $experiment,
-                "alternatives"     => $alternatives,
-                "traffic_fraction" => $traffic_fraction
+                'experiment'       => $experiment,
+                'alternatives'     => $alternatives,
+                'traffic_fraction' => $traffic_fraction,
             ));
         }
 
@@ -167,7 +167,7 @@ class Base
             'HTTP_X_FORWARDED_FOR',
             'HTTP_X_REAL_IP',
             'HTTP_CLIENT_IP',
-            'REMOTE_ADDR'
+            'REMOTE_ADDR',
         );
         $invalid_ips     = array('127.0.0.1', '::1');
 
@@ -189,14 +189,14 @@ class Base
 
     protected function sendRequest($endpoint, $params = array())
     {
-        if (isset($params["experiment"]) && !preg_match('#^[a-z0-9][a-z0-9\-_ ]*$#i', $params["experiment"])) {
-            throw new \Exception("Invalid Experiment Name: " . $params["experiment"]);
+        if (isset($params['experiment']) && !preg_match('#^[a-z0-9][a-z0-9\-_ ]*$#i', $params['experiment'])) {
+            throw new \Exception(sprintf('Invalid Experiment Name: %s', $params['experiment']));
         }
 
         $params = array_merge(array(
             'client_id'  => $this->clientId,
             'ip_address' => $this->getIpAddress(),
-            'user_agent' => $this->getUserAgent()
+            'user_agent' => $this->getUserAgent(),
         ), $params);
 
         $url = $this->baseUrl . '/' . $endpoint;
