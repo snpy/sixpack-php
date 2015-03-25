@@ -2,7 +2,7 @@
 
 namespace SeatGeek\Sixpack\Response;
 
-class Participation extends Response
+class Participation extends AbstractResponse
 {
     private $control;
 

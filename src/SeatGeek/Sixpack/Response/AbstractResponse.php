@@ -2,7 +2,7 @@
 
 namespace SeatGeek\Sixpack\Response;
 
-class Response
+abstract class AbstractResponse
 {
     protected $response;
     protected $meta;

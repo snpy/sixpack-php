@@ -2,6 +2,6 @@
 
 namespace SeatGeek\Sixpack\Response;
 
-class Conversion extends Response
+class Conversion extends AbstractResponse
 {
 }
