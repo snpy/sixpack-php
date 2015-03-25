@@ -3,6 +3,7 @@
 namespace SeatGeek\Sixpack\Session;
 
 use SeatGeek\Sixpack\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 class Session
 {
@@ -12,8 +13,9 @@ class Session
     protected $timeout      = 500;
 
     protected $clientId;
+    protected $request;
 
-    public function __construct($options = array())
+    public function __construct($options = array(), Request $request = null)
     {
         if (isset($options['baseUrl'])) {
             $this->baseUrl = $options['baseUrl'];
@@ -25,6 +27,7 @@ class Session
             $this->timeout = $options['timeout'];
         }
         $this->setClientId(isset($options['clientId']) ? $options['clientId'] : null);
+        $this->request = $request ?: Request::createFromGlobals();
     }
 
     protected function setClientId($clientId = null)
@@ -46,10 +49,7 @@ class Session
 
     protected function retrieveClientId()
     {
-        $cookieName = $this->cookiePrefix . '_client_id';
-        if (isset($_COOKIE[$cookieName])) {
-            return $_COOKIE[$cookieName];
-        }
+        return $this->request->cookies->get($this->cookiePrefix . '_client_id');
     }
 
     protected function storeClientId($clientId)
@@ -80,18 +80,12 @@ class Session
 
     public function isForced($experiment)
     {
-        $forceKey = 'sixpack-force-' . $experiment;
-        if (in_array($forceKey, array_keys($_GET))) {
-            return true;
-        }
-
-        return false;
+        return $this->request->query->has('sixpack-force-' . $experiment);
     }
 
     protected function forceAlternative($experiment, $alternatives)
     {
-        $forceKey  = 'sixpack-force-' . $experiment;
-        $forcedAlt = $_GET[$forceKey];
+        $forcedAlt = $this->request->query->get('sixpack-force-' . $experiment);
 
         if (!in_array($forcedAlt, $alternatives)) {
             throw new \Exception('Invalid forced alternative');
@@ -154,37 +148,14 @@ class Session
 
     protected function getUserAgent()
     {
-        if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            return $_SERVER['HTTP_USER_AGENT'];
-        }
-
-        return null;
+        return $this->request->server->get('HTTP_USER_AGENT');
     }
 
     protected function getIpAddress()
     {
-        $orderedChoices = array(
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_REAL_IP',
-            'HTTP_CLIENT_IP',
-            'REMOTE_ADDR',
-        );
-        $invalidIps     = array('127.0.0.1', '::1');
+        $invalidIps = array('127.0.0.1', '::1');
 
-        // check each server var in order
-        // accepted ip must be non null and not in the invalid_ips list
-        foreach ($orderedChoices as $var) {
-            if (isset($_SERVER[$var])) {
-                $ip = $_SERVER[$var];
-                if ($ip && !in_array($ip, $invalidIps)) {
-                    $ips = explode(',', $ip);
-
-                    return reset($ips);
-                }
-            }
-        }
-
-        return null;
+        return reset(array_diff($this->request->getClientIps(), $invalidIps)) ? : null;
     }
 
     protected function sendRequest($endpoint, $params = array())
