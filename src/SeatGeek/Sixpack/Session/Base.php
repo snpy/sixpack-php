@@ -1,15 +1,17 @@
-<?php namespace SeatGeek\Sixpack\Session;
+<?php
+
+namespace SeatGeek\Sixpack\Session;
 
 use SeatGeek\Sixpack\Response;
 
 class Base
 {
     // configuration
-    protected $baseUrl = 'http://localhost:5000';
+    protected $baseUrl      = 'http://localhost:5000';
     protected $cookiePrefix = 'sixpack';
-    protected $timeout = 500;
+    protected $timeout      = 500;
 
-    protected $clientId = null;
+    protected $clientId;
 
     public function __construct($options = array())
     {
@@ -60,8 +62,9 @@ class Base
     {
         // This is just a first pass for testing. not actually unique.
         // TODO, NOT THIS
-        $md5 = strtoupper(md5(uniqid(rand(), true)));
+        $md5      = strtoupper(md5(uniqid(rand(), true)));
         $clientId = substr($md5, 0, 8) . '-' . substr($md5, 8, 4) . '-' . substr($md5, 12, 4) . '-' . substr($md5, 16, 4) . '-' . substr($md5, 20);
+
         return $clientId;
     }
 
@@ -81,12 +84,13 @@ class Base
         if (in_array($forceKey, array_keys($_GET))) {
             return true;
         }
+
         return false;
     }
 
     protected function forceAlternative($experiment, $alternatives)
     {
-        $forceKey = "sixpack-force-" . $experiment;
+        $forceKey  = "sixpack-force-" . $experiment;
         $forcedAlt = $_GET[$forceKey];
 
         if (!in_array($forcedAlt, $alternatives)) {
@@ -94,10 +98,10 @@ class Base
         }
 
         $mockJson = json_encode(array(
-          "status" => "ok",
-          "alternative" => array("name" => $forcedAlt),
-          "experiment" => array("version" => 0, "name" => $experiment),
-          "client_id" => null,
+            "status"      => "ok",
+            "alternative" => array("name" => $forcedAlt),
+            "experiment"  => array("version" => 0, "name" => $experiment),
+            "client_id"   => null,
         ));
         $mockMeta = array('http_code' => 200, 'called_url' => '');
 
@@ -113,8 +117,9 @@ class Base
     {
         list($rawResp, $meta) = $this->sendRequest('convert', array(
             "experiment" => $experiment,
-            "kpi" => $kpi,
+            "kpi"        => $kpi,
         ));
+
         return new Response\Conversion($rawResp, $meta);
     }
 
@@ -138,8 +143,8 @@ class Base
             list($rawResp, $meta) = $this->forceAlternative($experiment, $alternatives);
         } else {
             list($rawResp, $meta) = $this->sendRequest('participate', array(
-                "experiment" => $experiment,
-                "alternatives" => $alternatives,
+                "experiment"       => $experiment,
+                "alternatives"     => $alternatives,
                 "traffic_fraction" => $traffic_fraction
             ));
         }
@@ -152,18 +157,19 @@ class Base
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
             return $_SERVER['HTTP_USER_AGENT'];
         }
+
         return null;
     }
 
     protected function getIpAddress()
     {
-    	$ordered_choices = array(
+        $ordered_choices = array(
             'HTTP_X_FORWARDED_FOR',
             'HTTP_X_REAL_IP',
             'HTTP_CLIENT_IP',
             'REMOTE_ADDR'
         );
-        $invalid_ips = array('127.0.0.1', '::1');
+        $invalid_ips     = array('127.0.0.1', '::1');
 
         // check each server var in order
         // accepted ip must be non null and not in the invalid_ips list
@@ -172,6 +178,7 @@ class Base
                 $ip = $_SERVER[$var];
                 if ($ip && !in_array($ip, $invalid_ips)) {
                     $ips = explode(',', $ip);
+
                     return reset($ips);
                 }
             }
@@ -187,7 +194,7 @@ class Base
         }
 
         $params = array_merge(array(
-            'client_id' => $this->clientId,
+            'client_id'  => $this->clientId,
             'ip_address' => $this->getIpAddress(),
             'user_agent' => $this->getUserAgent()
         ), $params);
@@ -205,7 +212,7 @@ class Base
         curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
 
         $return = curl_exec($ch);
-        $meta = curl_getinfo($ch);
+        $meta   = curl_getinfo($ch);
 
         // handle failures in call dispatcher
         return array($return, $meta);

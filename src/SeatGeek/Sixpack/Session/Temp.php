@@ -1,15 +1,17 @@
-<?php namespace SeatGeek\Sixpack\Session;
+<?php
 
-class Temp extends Base {
+namespace SeatGeek\Sixpack\Session;
 
-     protected function retrieveClientId()
-     {
-         return;
-     }
+class Temp extends Base
+{
 
-     protected function storeClientId($clientId)
-     {
-         return;
-     }
+    protected function retrieveClientId()
+    {
+        return;
+    }
 
- }
+    protected function storeClientId($clientId)
+    {
+        return;
+    }
+}

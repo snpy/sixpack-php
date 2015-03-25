@@ -1,10 +1,10 @@
-<?php namespace SeatGeek\Sixpack\Response;
+<?php
 
-use SeatGeek\Sixpack\Response\Base;
+namespace SeatGeek\Sixpack\Response;
 
 class Participation extends Base
 {
-    private $control = null;
+    private $control;
 
     public function __construct($jsonResponse, $meta, $control = null)
     {
@@ -25,6 +25,7 @@ class Participation extends Base
         if (!$this->getSuccess()) {
             return $this->control;
         }
+
         return $this->response->alternative->name;
     }
 }

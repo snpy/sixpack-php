@@ -1,14 +1,16 @@
-<?php namespace SeatGeek\Sixpack\Response;
+<?php
+
+namespace SeatGeek\Sixpack\Response;
 
 class Base
 {
-    protected $response = null;
-    protected $meta = null;
+    protected $response;
+    protected $meta;
 
     public function __construct($jsonResponse, $meta)
     {
         $this->response = json_decode($jsonResponse);
-        $this->meta = $meta;
+        $this->meta     = $meta;
     }
 
     public function getSuccess()
