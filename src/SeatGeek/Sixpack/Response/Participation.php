@@ -17,7 +17,7 @@ class Participation extends AbstractResponse
 
     public function getExperiment()
     {
-        return $this->response->experiment;
+        return $this->response->getExperiment();
     }
 
     public function getAlternative()
@@ -26,6 +26,6 @@ class Participation extends AbstractResponse
             return $this->control;
         }
 
-        return $this->response->alternative->name;
+        return $this->response->getAlternative();
     }
 }

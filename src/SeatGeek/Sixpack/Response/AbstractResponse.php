@@ -2,16 +2,17 @@
 
 namespace SeatGeek\Sixpack\Response;
 
+use SeatGeek\Sixpack\Response\Bags;
+
 abstract class AbstractResponse
 {
     protected $response;
-    /** @var MetaBag */
     protected $meta;
 
     public function __construct($jsonResponse, $meta)
     {
-        $this->response = json_decode($jsonResponse);
-        $this->meta     = new MetaBag((array) $meta);
+        $this->response = new Bags\ResponseBag(json_decode($jsonResponse, true));
+        $this->meta     = new Bags\MetaBag((array) $meta);
     }
 
     public function getSuccess()
@@ -31,6 +32,6 @@ abstract class AbstractResponse
 
     public function getClientId()
     {
-        return $this->response->client_id;
+        return $this->response->getClientId();
     }
 }
