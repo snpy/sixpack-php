@@ -1,5 +1,5 @@
 {
-    "name": "seatgeek/sixpack-php",
+    "name": "snpy/sixpack-php",
     "description": "Sixpack A/B testing framework client",
     "keywords": ["api", "sixpack"],
     "license": "BSD-3-Clause",
