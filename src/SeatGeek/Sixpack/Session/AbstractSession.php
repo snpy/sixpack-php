@@ -206,6 +206,6 @@ abstract class AbstractSession
 
     static public function isValidExperimentName($name)
     {
-        return 1 === preg_match('#^[a-z\d][a-z\d\-_ ]*$#i', $name);
+        return 1 === preg_match('#^[a-z\d][a-z\d\-_]*$#i', $name);
     }
 }
