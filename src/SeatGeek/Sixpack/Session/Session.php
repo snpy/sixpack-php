@@ -2,7 +2,9 @@
 
 namespace SeatGeek\Sixpack\Session;
 
+use Buzz\Browser;
 use InvalidArgumentException;
+use SeatGeek\Sixpack\Client\Curl;
 use SeatGeek\Sixpack\Response;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -187,17 +189,22 @@ class Session
         $params = preg_replace('/%5B(?:[0-9]+)%5D=/', '=', http_build_query($params));
         $url .= '?' . $params;
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->timeout);
-        // Make sub 1 sec timeouts work, according to: http://ravidhavlesha.wordpress.com/2012/01/08/curl-timeout-problem-and-solution/
-        curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
+        $browser = $this->prepareCurlBrowser();
 
-        $return = curl_exec($ch);
-        $meta   = curl_getinfo($ch);
+        $return = $browser->get($url)->getContent();
+        $meta   = $browser->getClient()->getInfo();
 
         // handle failures in call dispatcher
         return array($return, $meta);
+    }
+
+    protected function prepareCurlBrowser()
+    {
+        $client = new Curl();
+        $client->setTimeout($this->timeout / 1000);
+        // Make sub 1 sec timeouts work, according to: http://ravidhavlesha.wordpress.com/2012/01/08/curl-timeout-problem-and-solution/
+        $client->setOption(CURLOPT_NOSIGNAL, 1);
+
+        return new Browser($client);
     }
 }
