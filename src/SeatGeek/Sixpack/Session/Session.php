@@ -178,11 +178,9 @@ class Session
             throw new InvalidArgumentException(sprintf('Invalid Experiment Name: %s', $params['experiment']));
         }
 
-        $url = $this->prepareUrl($endpoint, $params);
-
         $browser = $this->prepareCurlBrowser();
 
-        $return = $browser->get($url)->getContent();
+        $return = $browser->get($this->prepareUrl($endpoint, $params))->getContent();
         $meta   = $browser->getClient()->getInfo();
 
         // handle failures in call dispatcher
