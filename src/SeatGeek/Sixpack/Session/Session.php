@@ -11,6 +11,7 @@ class Session
     protected $baseUrl      = 'http://localhost:5000';
     protected $cookiePrefix = 'sixpack';
     protected $timeout      = 500;
+    protected $forcePrefix  = 'sixpack-force-';
 
     protected $clientId;
     protected $request;
@@ -26,7 +27,9 @@ class Session
         if (isset($options['timeout'])) {
             $this->timeout = $options['timeout'];
         }
+        isset($options['forcePrefix']) && ($this->forcePrefix = $options['forcePrefix']);
         $this->setClientId(isset($options['clientId']) ? $options['clientId'] : null);
+
         $this->request = $request ?: Request::createFromGlobals();
     }
 
@@ -80,12 +83,12 @@ class Session
 
     public function isForced($experiment)
     {
-        return $this->request->query->has('sixpack-force-' . $experiment);
+        return $this->request->query->has($this->forcePrefix . $experiment);
     }
 
     protected function forceAlternative($experiment, $alternatives)
     {
-        $forcedAlt = $this->request->query->get('sixpack-force-' . $experiment);
+        $forcedAlt = $this->request->query->get($this->forcePrefix . $experiment);
 
         if (!in_array($forcedAlt, $alternatives)) {
             throw new \Exception('Invalid forced alternative');
