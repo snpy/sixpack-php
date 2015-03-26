@@ -26,19 +26,24 @@ class Session
 
     protected function setOptions(array $options)
     {
-        $defaults = array(
-            'baseUrl'      => 'http://localhost:5000',
-            'cookiePrefix' => 'sixpack',
-            'timeout'      => 500,
-            'forcePrefix'  => 'sixpack-force-',
-        );
-        $options = array_intersect_key($options + $defaults, $defaults);
+        $defaults = $this->getDefaults();
+        $options  = array_intersect_key($options + $defaults, $defaults);
 
         foreach ($options as $key => $value) {
             $this->{$key} = $value;
         }
 
         $this->setClientId(isset($options['clientId']) ? $options['clientId'] : null);
+    }
+
+    protected function getDefaults()
+    {
+        return array(
+            'baseUrl'      => 'http://localhost:5000',
+            'cookiePrefix' => 'sixpack',
+            'timeout'      => 500,
+            'forcePrefix'  => 'sixpack-force-',
+        );
     }
 
     protected function setClientId($clientId = null)
