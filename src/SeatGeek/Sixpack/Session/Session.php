@@ -101,7 +101,8 @@ class Session
         $forcedAlt = $this->request->query->get($this->forcePrefix . $experiment);
 
         if (!in_array($forcedAlt, $alternatives)) {
-            throw new InvalidArgumentException('Invalid forced alternative');
+            $message = 'Invalid forced alternative; given "%s"; allowed: "%s"';
+            throw new InvalidArgumentException(sprintf($message, $forcedAlt, explode('", "', $alternatives)));
         }
 
         $mockJson = json_encode(array(
@@ -144,7 +145,8 @@ class Session
         }
 
         if (floatval($trafficFraction) < 0 || floatval($trafficFraction) > 1) {
-            throw new InvalidArgumentException('Invalid Traffic Fraction; only [0,1] are allowed');
+            $message = sprintf('Invalid Traffic Fraction; only [0,1] are allowed; given %f', $trafficFraction);
+            throw new InvalidArgumentException($message);
         }
 
         if ($this->isForced($experiment)) {
