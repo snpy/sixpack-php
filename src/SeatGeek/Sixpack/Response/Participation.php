@@ -8,9 +8,7 @@ class Participation extends AbstractResponse
 
     public function __construct($jsonResponse, $meta, $control = null)
     {
-        if ($control !== null) {
-            $this->control = $control;
-        }
+        $this->control = $control;
 
         parent::__construct($jsonResponse, $meta);
     }
