@@ -2,6 +2,7 @@
 
 namespace SeatGeek\Sixpack\Session;
 
+use InvalidArgumentException;
 use SeatGeek\Sixpack\Response;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -91,7 +92,7 @@ class Session
         $forcedAlt = $this->request->query->get($this->forcePrefix . $experiment);
 
         if (!in_array($forcedAlt, $alternatives)) {
-            throw new \Exception('Invalid forced alternative');
+            throw new InvalidArgumentException('Invalid forced alternative');
         }
 
         $mockJson = json_encode(array(
@@ -123,17 +124,18 @@ class Session
     public function participate($experiment, $alternatives, $trafficFraction = 1)
     {
         if (count($alternatives) < 2) {
-            throw new \Exception('At least two alternatives are required');
+            $message = sprintf('At least two alternatives are required; %d given', count($alternatives));
+            throw new InvalidArgumentException($message);
         }
 
         foreach ($alternatives as $alt) {
             if (!preg_match('#^[a-z0-9][a-z0-9\-_ ]*$#i', $alt)) {
-                throw new \Exception(sprintf('Invalid Alternative Name: %s', $alt));
+                throw new InvalidArgumentException(sprintf('Invalid Alternative Name: %s', $alt));
             }
         }
 
         if (floatval($trafficFraction) < 0 || floatval($trafficFraction) > 1) {
-            throw new \Exception('Invalid Traffic Fraction; only [0,1] are allowed');
+            throw new InvalidArgumentException('Invalid Traffic Fraction; only [0,1] are allowed');
         }
 
         if ($this->isForced($experiment)) {
@@ -164,7 +166,7 @@ class Session
     protected function sendRequest($endpoint, $params = array())
     {
         if (isset($params['experiment']) && !preg_match('#^[a-z0-9][a-z0-9\-_ ]*$#i', $params['experiment'])) {
-            throw new \Exception(sprintf('Invalid Experiment Name: %s', $params['experiment']));
+            throw new InvalidArgumentException(sprintf('Invalid Experiment Name: %s', $params['experiment']));
         }
 
         $params = array_merge(array(
