@@ -9,10 +9,10 @@ use Symfony\Component\HttpFoundation\Request;
 class Session
 {
     // configuration
-    protected $baseUrl      = 'http://localhost:5000';
-    protected $cookiePrefix = 'sixpack';
-    protected $timeout      = 500;
-    protected $forcePrefix  = 'sixpack-force-';
+    protected $baseUrl;
+    protected $cookiePrefix;
+    protected $timeout;
+    protected $forcePrefix;
 
     protected $clientId;
     protected $request;
@@ -26,10 +26,18 @@ class Session
 
     protected function setOptions(array $options)
     {
-        isset($options['baseUrl']) && ($this->baseUrl = $options['baseUrl']);
-        isset($options['cookiePrefix']) && ($this->cookiePrefix = $options['cookiePrefix']);
-        isset($options['timeout']) && ($this->timeout = $options['timeout']);
-        isset($options['forcePrefix']) && ($this->forcePrefix = $options['forcePrefix']);
+        $defaults = array(
+            'baseUrl'      => 'http://localhost:5000',
+            'cookiePrefix' => 'sixpack',
+            'timeout'      => 500,
+            'forcePrefix'  => 'sixpack-force-',
+        );
+        $options = array_intersect_key($options + $defaults, $defaults);
+
+        foreach ($options as $key => $value) {
+            $this->{$key} = $value;
+        }
+
         $this->setClientId(isset($options['clientId']) ? $options['clientId'] : null);
     }
 
