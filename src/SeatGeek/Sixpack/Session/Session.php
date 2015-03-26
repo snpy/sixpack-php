@@ -76,12 +76,7 @@ class Session
 
     protected function generateClientId()
     {
-        // This is just a first pass for testing. not actually unique.
-        // TODO, NOT THIS
-        $md5      = strtoupper(md5(uniqid(rand(), true)));
-        $clientId = substr($md5, 0, 8) . '-' . substr($md5, 8, 4) . '-' . substr($md5, 12, 4) . '-' . substr($md5, 16, 4) . '-' . substr($md5, 20);
-
-        return $clientId;
+        return UuidGenerator::v4();
     }
 
     public function setTimeout($milliseconds)
