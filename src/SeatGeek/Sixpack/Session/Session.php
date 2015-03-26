@@ -213,6 +213,6 @@ class Session
 
     public function isValidExperimentName($name)
     {
-        return 1 === preg_match('#^[a-z0-9][a-z0-9\-_ ]*$#i', $name);
+        return 1 === preg_match('#^[a-z\d][a-z\d\-_ ]*$#i', $name);
     }
 }
