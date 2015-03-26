@@ -2,7 +2,7 @@
 
 namespace SeatGeek\Sixpack\Session;
 
-class NoCookieSession extends AbstractSession
+class CookielessSession extends AbstractSession
 {
     protected function retrieveClientId()
     {
