@@ -8,20 +8,18 @@ use SeatGeek\Sixpack\Client\Curl;
 use SeatGeek\Sixpack\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class Session
+abstract class AbstractSession
 {
-    // configuration
     protected $baseUrl;
-    protected $cookiePrefix;
     protected $timeout;
     protected $forcePrefix;
 
     protected $clientId;
     protected $request;
 
-    public function __construct($options = array(), Request $request = null)
+    public function __construct(array $options = array(), Request $request = null)
     {
-        $this->setOptions((array)$options);
+        $this->setOptions($options);
 
         $this->request = $request ?: Request::createFromGlobals();
     }
@@ -35,16 +33,16 @@ class Session
             $this->{$key} = $value;
         }
 
-        $this->setClientId(isset($options['clientId']) ? $options['clientId'] : null);
+        $this->setClientId($options['clientId']);
     }
 
     protected function getDefaults()
     {
         return array(
-            'baseUrl'      => 'http://localhost:5000',
-            'cookiePrefix' => 'sixpack',
-            'timeout'      => 500,
-            'forcePrefix'  => 'sixpack-force-',
+            'baseUrl'     => 'http://localhost:5000',
+            'timeout'     => 500,
+            'forcePrefix' => 'sixpack-force-',
+            'clientId'    => null,
         );
     }
 
@@ -65,16 +63,9 @@ class Session
         return $this->clientId;
     }
 
-    protected function retrieveClientId()
-    {
-        return $this->request->cookies->get($this->cookiePrefix . '_client_id');
-    }
+    abstract protected function retrieveClientId();
 
-    protected function storeClientId($clientId)
-    {
-        $cookieName = $this->cookiePrefix . '_client_id';
-        setcookie($cookieName, $clientId, time() + (60 * 60 * 24 * 30 * 100), '/');
-    }
+    abstract protected function storeClientId($clientId);
 
     protected function generateClientId()
     {
@@ -139,7 +130,7 @@ class Session
         }
 
         foreach ($alternatives as $alt) {
-            if (!$this->isValidExperimentName($alt)) {
+            if (!static::isValidExperimentName($alt)) {
                 throw new InvalidArgumentException(sprintf('Invalid Alternative Name: %s', $alt));
             }
         }
@@ -176,7 +167,7 @@ class Session
 
     protected function sendRequest($endpoint, $params = array())
     {
-        if (isset($params['experiment']) && !$this->isValidExperimentName($params['experiment'])) {
+        if (isset($params['experiment']) && !static::isValidExperimentName($params['experiment'])) {
             throw new InvalidArgumentException(sprintf('Invalid Experiment Name: %s', $params['experiment']));
         }
 
@@ -213,7 +204,7 @@ class Session
         return new Browser($client);
     }
 
-    public function isValidExperimentName($name)
+    static public function isValidExperimentName($name)
     {
         return 1 === preg_match('#^[a-z\d][a-z\d\-_ ]*$#i', $name);
     }
