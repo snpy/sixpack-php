@@ -15,7 +15,7 @@ Basic example:
 The PHP client stores a unique client id in the current user's cookie by default.
 
 ```PHP
-use SeatGeak\Sixpack\Session\Session;
+use SeatGeak\Sixpack\Session\CookieSession as Session;
 
 $response = (new Session())->participate('experiment-name', ['blue', 'red']);
 $variant  = $response->getAlternativeName();
@@ -30,30 +30,30 @@ if ('blue' === $variant) {
 }
 ```
 
-Each session has a `client_id` associated with it that must be preserved across requests. The PHP client handles this automatically. If you'd wish to change that behaviour, you can do so like this:
+Each session has a `clientId` associated with it that must be preserved across requests. The PHP client handles this automatically. If you'd wish to change that behaviour, you can do so like this:
 
 ```PHP
-use SeatGeak\Sixpack\Session\Session;
+use SeatGeak\Sixpack\Session\CookielessSession as Session;
 
-$response = (new Session())->participate('experiment-name', ['blue', 'red']);
-PDO::saveClientId($response->getClientId());
-```
+$clientId = PDO::findClientId();
 
-For future requests, create the `Session` using the `client_id` stored in the cookie:
-
-```PHP
-use SeatGeak\Sixpack\Session\Session;
-
-$session = new Session(['clientId' => PDO::findClientId()]);
+$session  = new Session(['clientId' => $clientId]);
 $session->convert('experiment-name');
+
+$response = $session->participate('experiment-name', ['blue', 'red']);
+
+empty($clientId) && PDO::saveClientId($response->getClientId());
 ```
 
-All possible options for the Session c-tor:
+All possible options for the `CookielessSession` c-tor:
 
   * _clientId_ - custom client ID; use when you don't want to use cookies; default: NULL,
   * _baseUrl_ - Sixpack Server's location on the web; default: http://localhost:5000,
-  * _cookiePrefix_ - set the prefix for cookie (not applicable when clientId is set); default: `sixpack`,
   * _forcePrefix_ - set the prefix for "force Sixpack experiment" GET parameter; default: `sixpack-force-`.
+
+Additionally `CookieSession` adds another option:
+
+  * _cookiePrefix_ - set the prefix for cookie (not applicable when clientId is set); default: `sixpack`,
 
 If you'd like to force the Sixpack server to return a specific alternative for development or testing, you can do so by passing a query parameter prefixed with `<forcePrefix>` option (see above) to that page being tested.
 
