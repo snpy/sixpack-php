@@ -60,7 +60,7 @@ class Session
         $this->storeClientId($clientId);
     }
 
-    public function getClientid()
+    public function getClientId()
     {
         return $this->clientId;
     }
