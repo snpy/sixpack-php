@@ -138,7 +138,7 @@ class Session
         }
 
         foreach ($alternatives as $alt) {
-            if (!preg_match('#^[a-z0-9][a-z0-9\-_ ]*$#i', $alt)) {
+            if (!$this->isValidExperimentName($alt)) {
                 throw new InvalidArgumentException(sprintf('Invalid Alternative Name: %s', $alt));
             }
         }
@@ -174,7 +174,7 @@ class Session
 
     protected function sendRequest($endpoint, $params = array())
     {
-        if (isset($params['experiment']) && !preg_match('#^[a-z0-9][a-z0-9\-_ ]*$#i', $params['experiment'])) {
+        if (isset($params['experiment']) && !$this->isValidExperimentName($params['experiment'])) {
             throw new InvalidArgumentException(sprintf('Invalid Experiment Name: %s', $params['experiment']));
         }
 
@@ -209,5 +209,10 @@ class Session
         $client->setOption(CURLOPT_NOSIGNAL, 1);
 
         return new Browser($client);
+    }
+
+    public function isValidExperimentName($name)
+    {
+        return 1 === preg_match('#^[a-z0-9][a-z0-9\-_ ]*$#i', $name);
     }
 }
