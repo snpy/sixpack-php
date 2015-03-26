@@ -17,7 +17,8 @@ The PHP client stores a unique client id in the current user's cookie by default
 ```PHP
 use SeatGeak\Sixpack\Session\Session;
 
-$variant = (new Session())->participate('experiment-name', ['blue', 'red'])->getAlternativeName();
+$response = (new Session())->participate('experiment-name', ['blue', 'red']);
+$variant  = $response->getAlternativeName();
 if ('blue' === $variant) {
     //
     // do something "blue"
