@@ -9,8 +9,6 @@ namespace SeatGeek\Sixpack\Session;
  *
  * @link http://php.net/manual/en/function.uniqid.php#94959
  * @author Andrew Moore
- *
- * @package SeatGeek\Sixpack\Session
  */
 class UuidGenerator
 {
