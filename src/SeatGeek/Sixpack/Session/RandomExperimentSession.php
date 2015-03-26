@@ -2,7 +2,7 @@
 
 namespace SeatGeek\Sixpack\Session;
 
-class RandomSession extends Session
+class RandomExperimentSession extends Session
 {
     protected function retrieveClientId()
     {
