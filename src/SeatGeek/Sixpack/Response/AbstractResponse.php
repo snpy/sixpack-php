@@ -15,7 +15,7 @@ abstract class AbstractResponse
         $this->meta     = new Bags\MetaBag((array) $meta);
     }
 
-    public function getSuccess()
+    public function isSuccess()
     {
         return ($this->getStatus() === 200);
     }

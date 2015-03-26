@@ -15,12 +15,12 @@ class Participation extends AbstractResponse
 
     public function getExperiment()
     {
-        return $this->getSuccess() ? $this->response->getExperiment() : null;
+        return $this->isSuccess() ? $this->response->getExperiment() : null;
     }
 
     public function getAlternative()
     {
-        return $this->getSuccess() ? $this->response->getAlternative() : null;
+        return $this->isSuccess() ? $this->response->getAlternative() : null;
     }
 
     public function getAlternativeName()
