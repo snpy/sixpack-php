@@ -19,14 +19,18 @@ class Session
 
     public function __construct($options = array(), Request $request = null)
     {
+        $this->setOptions((array)$options);
+
+        $this->request = $request ?: Request::createFromGlobals();
+    }
+
+    protected function setOptions(array $options)
+    {
         isset($options['baseUrl']) && ($this->baseUrl = $options['baseUrl']);
         isset($options['cookiePrefix']) && ($this->cookiePrefix = $options['cookiePrefix']);
         isset($options['timeout']) && ($this->timeout = $options['timeout']);
         isset($options['forcePrefix']) && ($this->forcePrefix = $options['forcePrefix']);
-
         $this->setClientId(isset($options['clientId']) ? $options['clientId'] : null);
-
-        $this->request = $request ?: Request::createFromGlobals();
     }
 
     protected function setClientId($clientId = null)
