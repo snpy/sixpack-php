@@ -7,6 +7,10 @@
         {
             "name": "Zack Kitzmiller",
             "email": "zack@seatgeek.com"
+        },
+        {
+            "name": "Marek Snopkowski",
+            "email": "marek@kramsoft.eu"
         }
     ],
     "require": {
