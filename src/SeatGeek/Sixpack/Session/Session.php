@@ -178,16 +178,7 @@ class Session
             throw new InvalidArgumentException(sprintf('Invalid Experiment Name: %s', $params['experiment']));
         }
 
-        $params += array(
-            'client_id'  => $this->clientId,
-            'ip_address' => $this->getIpAddress(),
-            'user_agent' => $this->getUserAgent(),
-        );
-
-        $url = $this->baseUrl . '/' . $endpoint;
-
-        $params = preg_replace('/%5B(?:[0-9]+)%5D=/', '=', http_build_query($params));
-        $url .= '?' . $params;
+        $url = $this->prepareUrl($endpoint, $params);
 
         $browser = $this->prepareCurlBrowser();
 
@@ -196,6 +187,20 @@ class Session
 
         // handle failures in call dispatcher
         return array($return, $meta);
+    }
+
+    protected function prepareUrl($endpoint, $parameters)
+    {
+        $parameters += array(
+            'client_id'  => $this->clientId,
+            'ip_address' => $this->getIpAddress(),
+            'user_agent' => $this->getUserAgent(),
+        );
+
+        // Dig out the reason of this hack.
+        $parameters = preg_replace('/%5B(?:[0-9]+)%5D=/', '=', http_build_query($parameters));
+
+        return sprintf('%s/%s?%s', $this->baseUrl, $endpoint, $parameters);
     }
 
     protected function prepareCurlBrowser()
