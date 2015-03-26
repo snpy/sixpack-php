@@ -176,11 +176,11 @@ class Session
             throw new InvalidArgumentException(sprintf('Invalid Experiment Name: %s', $params['experiment']));
         }
 
-        $params = array_merge(array(
+        $params += array(
             'client_id'  => $this->clientId,
             'ip_address' => $this->getIpAddress(),
             'user_agent' => $this->getUserAgent(),
-        ), $params);
+        );
 
         $url = $this->baseUrl . '/' . $endpoint;
 
